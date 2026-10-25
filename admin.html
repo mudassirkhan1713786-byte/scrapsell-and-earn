@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MudassirEarn Admin</title>
+<style>
+body{font-family:Arial,sans-serif;background:#111;color:#fff;margin:0;padding:20px}
+.card{max-width:650px;margin:30px auto;background:#222;padding:22px;border-radius:12px}
+h1{color:#d4af37;text-align:center}
+input,select,button{box-sizing:border-box;width:100%;padding:12px;margin:8px 0;border-radius:6px;border:1px solid #777}
+button{background:#d4af37;color:#111;font-weight:bold;cursor:pointer}
+.row{border:1px solid #555;padding:12px;margin:12px 0;border-radius:8px}
+.hidden{display:none}
+.note{color:#bbb;font-size:14px}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>MudassirEarn Admin</h1>
+
+<section id="login">
+<h2>Admin Login</h2>
+<input id="username" placeholder="Username" autocomplete="username">
+<input id="password" type="password" placeholder="Password" autocomplete="current-password">
+<button onclick="login()">Login</button>
+<p id="loginMessage"></p>
+<p class="note">Admin access only.</p>
+</section>
+
+<section id="dashboard" class="hidden">
+<h2>Manage Scrap Rates</h2>
+<p class="note">Enter price per kg (₹). Save after editing.</p>
+<div id="rates"></div>
+<button onclick="addRate()">+ Add Scrap Type</button>
+<button onclick="saveRates()">Save Rates</button>
+<button onclick="logout()">Logout</button>
+<p id="message"></p>
+</section>
+</div>
+
+<script>
+let currentRates=[];
+
+async function login(){
+ const message=document.getElementById('loginMessage');
+ message.textContent='Logging in...';
+ try{
+  const response=await fetch('/api/admin/login',{
+   method:'POST',
+   headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({
+    username:document.getElementById('username').value,
+    password:document.getElementById('password').value
+   })
+  });
+  const data=await response.json();
+  if(!response.ok) throw new Error(data.error||'Login failed');
+  document.getElementById('login').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+  await loadRates();
+ }catch(error){message.textContent=error.message;}
+}
+
+function drawRates(){
+ const box=document.getElementById('rates');
+ box.innerHTML='';
+ currentRates.forEach((rate,index)=>{
+  const row=document.createElement('div');
+  row.className='row';
+  row.innerHTML=`
+   <label>Material</label>
+   <input data-field="type" data-index="${index}" value="${escapeAttr(rate.type)}">
+   <label>Quality</label>
+   <input data-field="quality" data-index="${index}" value="${escapeAttr(rate.quality)}">
+   <label>Price per kg (₹)</label>
+   <input data-field="price" data-index="${index}" type="number" min="0" step="0.01" value="${Number(rate.price)||0}">
+   <button type="button" data-delete="${index}">Remove</button>`;
+  box.appendChild(row);
+ });
+ box.querySelectorAll('input').forEach(input=>{
+  input.addEventListener('input',()=>{
+   const i=Number(input.dataset.index);
+   const field=input.dataset.field;
+   currentRates[i][field]=field==='price'?Number(input.value):input.value;
+  });
+ });
+ box.querySelectorAll('[data-delete]').forEach(button=>{
+  button.addEventListener('click',()=>{
+   currentRates.splice(Number(button.dataset.delete),1);
+   drawRates();
+  });
+ });
+}
+
+function escapeAttr(value){
+ return String(value??'').replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+}
+
+async function loadRates(){
+ const response=await fetch('/api/rates');
+ currentRates=await response.json();
+ drawRates();
+}
+
+function addRate(){
+ currentRates.push({type:'Copper',quality:'New Quality',price:0});
+ drawRates();
+}
+
+async function saveRates(){
+ const message=document.getElementById('message');
+ message.textContent='Saving...';
+ try{
+  const response=await fetch('/api/admin/rates',{
+   method:'PUT',
+   headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({rates:currentRates})
+  });
+  const data=await response.json();
+  if(!response.ok) throw new Error(data.error||'Save failed');
+  message.textContent='Rates saved successfully.';
+ }catch(error){message.textContent=error.message;}
+}
+
+async function logout(){
+ await fetch('/api/admin/logout',{method:'POST'});
+ document.getElementById('dashboard').classList.add('hidden');
+ document.getElementById('login').classList.remove('hidden');
+ document.getElementById('password').value='';
+ document.getElementById('loginMessage').textContent='Logged out.';
+}
+</script>
+</body>
+</html>
