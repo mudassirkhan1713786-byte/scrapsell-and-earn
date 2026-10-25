@@ -1,0 +1,8 @@
+{
+  "name": "scrapsell-and-earn",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ScrapSell & Earn copper and aluminium scrap buying website",
+  "scripts": { "start": "node server.js" },
+  "dependencies": { "express": "^4.21.2" }
+}
