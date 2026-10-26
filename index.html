@@ -1,3 +1,620 @@
-eyebrow">OWNER CONTROL</span><h2>Admin Dashboard</h2><div class="admin-tabs"><button class="tab active" data-tab="ratesAdmin">Manage rates</button><button class="tab" data-tab="enquiriesAdmin">Enquiries</button></div><div id="ratesAdmin"><div id="adminRates"></div><button id="saveRates" class="button primary">Save rates</button><p id="rateMessage" class="form-message"></p></div><div id="enquiriesAdmin" class="hidden"><div id="enquiryList"></div></div><button id="logout" class="button secondary">Log out</button></div></div></div>
-<script src="/app.js"></script>
-</body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>MudassirEarn | Scrap Buying</title>
+
+  <meta name="description" content="Sell your copper and aluminium scrap. Contact MudassirEarn directly by phone or WhatsApp.">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --green: #16a34a;
+      --dark: #10231b;
+      --light: #f4f8f5;
+      --white: #ffffff;
+      --muted: #65756b;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    .topbar {
+      background: #0b1711;
+      color: white;
+      text-align: center;
+      padding: 9px 12px;
+      font-size: 13px;
+    }
+
+    header {
+      background: white;
+      padding: 17px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      border-bottom: 1px solid #e5ece7;
+    }
+
+    .logo {
+      font-size: 23px;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+
+    .logo span {
+      color: var(--green);
+    }
+
+    .header-contact {
+      background: #e7f8ec;
+      color: #137333;
+      border-radius: 30px;
+      padding: 10px 15px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .hero {
+      background:
+        radial-gradient(circle at 85% 20%, #28513d 0, transparent 35%),
+        linear-gradient(135deg, #10231b, #193c2b);
+      color: white;
+      padding: 70px 7% 75px;
+    }
+
+    .hero-inner {
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #254c35;
+      border: 1px solid #447354;
+      padding: 7px 13px;
+      border-radius: 30px;
+      font-size: 12px;
+      color: #baf3c9;
+      margin-bottom: 22px;
+    }
+
+    .hero h1 {
+      font-size: clamp(36px, 7vw, 65px);
+      line-height: 1.12;
+      letter-spacing: -2px;
+      max-width: 750px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 span {
+      color: #65e58d;
+    }
+
+    .hero p {
+      max-width: 590px;
+      color: #d3e4d8;
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 13px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px 22px;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 15px;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-call {
+      background: white;
+      color: #14251b;
+    }
+
+    .btn-whatsapp {
+      background: #20c765;
+      color: white;
+    }
+
+    .section {
+      max-width: 1100px;
+      margin: auto;
+      padding: 65px 6%;
+    }
+
+    .section-heading {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .eyebrow {
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .section-heading h2 {
+      font-size: clamp(27px, 5vw, 38px);
+      margin: 8px 0;
+      letter-spacing: -1px;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 28px 23px;
+      border-radius: 17px;
+      border: 1px solid #e3ece5;
+      box-shadow: 0 8px 25px #10231b08;
+    }
+
+    .icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: #e8f8ed;
+      font-size: 27px;
+      margin-bottom: 18px;
+    }
+
+    .card h3 {
+      font-size: 19px;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+
+    .text-link {
+      color: #16833d;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .rate-section {
+      background: #eaf3ec;
+    }
+
+    .rate-box {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #dce8de;
+    }
+
+    .rate-header,
+    .rate-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      padding: 17px 22px;
+      align-items: center;
+    }
+
+    .rate-header {
+      background: #183a28;
+      color: white;
+      font-weight: bold;
+    }
+
+    .rate-row {
+      border-bottom: 1px solid #edf1ee;
+      font-size: 14px;
+    }
+
+    .rate-row:last-child {
+      border-bottom: none;
+    }
+
+    .rate-value {
+      color: #16833d;
+      font-weight: bold;
+      text-align: right;
+    }
+
+    .rate-note {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 15px;
+    }
+
+    .contact-section {
+      padding: 65px 6%;
+      background: white;
+    }
+
+    .contact-box {
+      max-width: 850px;
+      margin: auto;
+      background: #10231b;
+      color: white;
+      border-radius: 22px;
+      text-align: center;
+      padding: 45px 22px;
+    }
+
+    .contact-box h2 {
+      font-size: clamp(27px, 5vw, 39px);
+      margin-bottom: 12px;
+    }
+
+    .contact-box p {
+      color: #d0dfd5;
+      margin-bottom: 25px;
+      font-size: 14px;
+    }
+
+    .contact-number {
+      font-size: 21px;
+      font-weight: bold;
+      margin-bottom: 25px;
+    }
+
+    .contact-box .buttons {
+      justify-content: center;
+    }
+
+    footer {
+      background: #0b1711;
+      color: #c3d1c8;
+      padding: 25px 6%;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    footer strong {
+      color: white;
+    }
+
+    .floating-whatsapp {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 10;
+      background: #20c765;
+      color: white;
+      border-radius: 50px;
+      padding: 14px 18px;
+      font-weight: bold;
+      box-shadow: 0 5px 20px #0002;
+    }
+
+    @media (max-width: 700px) {
+      header {
+        padding: 15px 5%;
+      }
+
+      .logo {
+        font-size: 20px;
+      }
+
+      .header-contact {
+        padding: 9px 11px;
+        font-size: 11px;
+      }
+
+      .hero {
+        padding: 55px 6%;
+      }
+
+      .hero h1 {
+        letter-spacing: -1px;
+      }
+
+      .buttons {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .section {
+        padding: 50px 6%;
+      }
+
+      .rate-header,
+      .rate-row {
+        padding: 15px 12px;
+        font-size: 12px;
+        gap: 8px;
+      }
+
+      .contact-box {
+        padding: 35px 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="topbar">
+    Copper & Aluminium Scrap Buying | Contact Us Directly
+  </div>
+
+  <header>
+    <a href="/" class="logo">
+      Mudassir<span>Earn</span>
+    </a>
+
+    <a href="tel:+919235566048" class="header-contact">
+      📞 Call Now
+    </a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-inner">
+
+        <div class="badge">♻️ YOUR SCRAP, YOUR VALUE</div>
+
+        <h1>
+          Sell Your Scrap.<br>
+          Get a <span>Better Deal.</span>
+        </h1>
+
+        <p>
+          Have old copper wires, copper cables or aluminium scrap?
+          Contact MudassirEarn directly by phone or WhatsApp.
+          Ask about current rates and selling options.
+        </p>
+
+        <div class="buttons">
+          <a class="btn btn-call" href="tel:+919235566048">
+            📞 Call Now
+          </a>
+
+          <a class="btn btn-whatsapp"
+             href="https://wa.me/919235566048?text=Hello%2C%20I%20want%20to%20sell%20scrap."
+             target="_blank"
+             rel="noopener">
+            WhatsApp Message ↗
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-heading">
+        <div class="eyebrow">WHAT WE BUY</div>
+        <h2>Scrap We Deal In</h2>
+        <p>Contact us to discuss your scrap material and quantity.</p>
+      </div>
+
+      <div class="cards">
+
+        <article class="card">
+          <div class="icon">🔌</div>
+          <h3>Copper Wire</h3>
+          <p>Old electrical wires and copper wire scrap.</p>
+          <a class="text-link"
+             href="https://wa.me/919235566048?text=Hello%2C%20I%20have%20copper%20wire%20scrap."
+             target="_blank" rel="noopener">
+            Ask on WhatsApp →
+          </a>
+        </article>
+
+        <article class="card">
+          <div class="icon">🧰</div>
+          <h3>Copper Cable</h3>
+          <p>Old copper cables and mixed copper scrap.</p>
+          <a class="text-link"
+             href="https://wa.me/919235566048?text=Hello%2C%20I%20have%20copper%20cable%20scrap."
+             target="_blank" rel="noopener">
+            Ask on WhatsApp →
+          </a>
+        </article>
+
+        <article class="card">
+          <div class="icon">♻️</div>
+          <h3>Aluminium Scrap</h3>
+          <p>Aluminium wire and other aluminium scrap materials.</p>
+          <a class="text-link"
+             href="https://wa.me/919235566048?text=Hello%2C%20I%20have%20aluminium%20scrap."
+             target="_blank" rel="noopener">
+            Ask on WhatsApp →
+          </a>
+        </article>
+
+      </div>
+    </section>
+
+    <section class="rate-section">
+      <div class="section">
+        <div class="section-heading">
+          <div class="eyebrow">SCRAP PRICE LIST</div>
+          <h2>Today's Scrap Rates</h2>
+          <p>Contact us to confirm the current rate before selling.</p>
+        </div>
+
+        <div class="rate-box">
+          <div class="rate-header">
+            <span>Material</span>
+            <span style="text-align:right">Rate</span>
+          </div>
+
+          <div id="rates-list">
+            <div class="rate-row">
+              <span>Pure Copper Wire</span>
+              <span class="rate-value">Call for rate</span>
+            </div>
+            <div class="rate-row">
+              <span>Mixed Copper Scrap</span>
+              <span class="rate-value">Call for rate</span>
+            </div>
+            <div class="rate-row">
+              <span>Copper Cable Scrap</span>
+              <span class="rate-value">Call for rate</span>
+            </div>
+            <div class="rate-row">
+              <span>Aluminium Wire Scrap</span>
+              <span class="rate-value">Call for rate</span>
+            </div>
+            <div class="rate-row">
+              <span>Mixed Aluminium Scrap</span>
+              <span class="rate-value">Call for rate</span>
+            </div>
+          </div>
+
+          <div class="rate-note">
+            Rates may change according to material quality and market prices.
+          </div>
+        </div>
+
+        <div class="buttons" style="justify-content:center;margin-top:25px;">
+          <a class="btn btn-call" href="tel:+919235566048">
+            📞 Check Rate by Phone
+          </a>
+          <a class="btn btn-whatsapp"
+             href="https://wa.me/919235566048?text=Hello%2C%20please%20tell%20me%20today%27s%20scrap%20rates."
+             target="_blank" rel="noopener">
+            Ask on WhatsApp
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact-section">
+      <div class="contact-box">
+        <div class="eyebrow">LET'S CONNECT</div>
+
+        <h2>Ready to Sell Your Scrap?</h2>
+
+        <p>
+          No forms. No complicated steps.<br>
+          Call us or send a WhatsApp message directly.
+        </p>
+
+        <div class="contact-number">
+          +91 92355 66048
+        </div>
+
+        <div class="buttons">
+          <a class="btn btn-call" href="tel:+919235566048">
+            📞 Call 9235566048
+          </a>
+
+          <a class="btn btn-whatsapp"
+             href="https://wa.me/919235566048?text=Hello%20MudassirEarn%2C%20I%20want%20to%20sell%20scrap."
+             target="_blank" rel="noopener">
+            🟢 Message on WhatsApp
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <strong>MudassirEarn</strong><br>
+    Copper & Aluminium Scrap Buying<br>
+    © <span id="year"></span> MudassirEarn. All rights reserved.
+  </footer>
+
+  <a class="floating-whatsapp"
+     href="https://wa.me/919235566048?text=Hello%20MudassirEarn"
+     target="_blank" rel="noopener">
+    WhatsApp
+  </a>
+
+  <script>
+    document.getElementById("year").textContent =
+      new Date().getFullYear();
+
+    async function loadRates() {
+      try {
+        const response = await fetch("/api/rates");
+
+        if (!response.ok) return;
+
+        const rates = await response.json();
+
+        if (!Array.isArray(rates) || rates.length === 0) return;
+
+        const list = document.getElementById("rates-list");
+        list.innerHTML = "";
+
+        rates.forEach(item => {
+          const row = document.createElement("div");
+          row.className = "rate-row";
+
+          const name = document.createElement("span");
+          name.textContent = item.name || "Scrap Material";
+
+          const rate = document.createElement("span");
+          rate.className = "rate-value";
+
+          const value = String(item.rate || "").trim();
+
+          rate.textContent = value
+            ? "₹" + value
+            : "Call for rate";
+
+          row.appendChild(name);
+          row.appendChild(rate);
+          list.appendChild(row);
+        });
+      } catch (error) {
+        console.log("Using default scrap rates.");
+      }
+    }
+
+    loadRates();
+  </script>
+
+</body>
+</html>
